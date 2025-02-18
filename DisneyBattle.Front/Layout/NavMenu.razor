@@ -1,0 +1,18 @@
+﻿<MudAppBar Elevation="1">
+    <MudText Typo="Typo.h5" Class="ml-3"><img src="./img/disney-logo.png"  height="70px" /></MudText>
+    <MudSpacer />
+    <MudNavMenu Class="d-flex flex-row  my-custom-navmenu">
+        <MudNavLink Href="/" Match="NavLinkMatch.All">Homepage</MudNavLink>
+        <MudNavLink Href="/categories">Categories</MudNavLink>
+        <MudNavLink Href="/blog">Our Blog</MudNavLink>
+        <MudNavLink Href="/contacts">Contacts</MudNavLink>
+    </MudNavMenu>
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Inherit" Edge="Edge.End" ></MudIconButton>
+    <MudIconButton Icon="@profileIcon" Color="Color.Inherit" Edge="Edge.End" Href="/secured"  /> 
+</MudAppBar>
+
+@code
+{
+    private const string profileIcon = "<image width=\"20\" height=\"20\" xlink:href=\"img/profile-icon.png\" />";
+}

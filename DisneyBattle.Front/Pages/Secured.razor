@@ -1,0 +1,17 @@
+﻿@page "/secured"
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Components.Authorization
+<h3>Secured</h3>
+<CascadingAuthenticationState>
+    <AuthorizeView>
+        <Authorized>
+            <p>You are authenticated</p>
+            <DisneyBattle.Front.Components.UI.JwtDisplay></DisneyBattle.Front.Components.UI.JwtDisplay>
+            <button @onclick="Logout">Logout</button>
+        </Authorized>
+        <NotAuthorized>
+            <p>You are not authenticated</p>
+        </NotAuthorized>
+    </AuthorizeView>
+</CascadingAuthenticationState>
+ 

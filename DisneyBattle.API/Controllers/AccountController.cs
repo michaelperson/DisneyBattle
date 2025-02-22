@@ -25,7 +25,24 @@ namespace DisneyBattle.API.Controllers
         }
 
 
+
+
+        // POST: api/<AccountController>/login
+        /// <summary>
+        /// Get Token for the Disney Battle App
+        /// </summary>
+        /// <param name="lm">a <see cref="LoginModel"/> with pseudo and password</param>
+        /// <returns>an <see cref="JwtResponse"/></returns>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /api/Account/Login		      
+        ///
+        /// </remarks>
+        /// <response code="200">Return a JsonResult with Token And RefreshToken</response>
+        /// <response code="404">If Login failed, 404 with <see cref="LoginModel"/> filled with data transmitted </response> 
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]         
         public IActionResult Login(LoginModel lm)
         {
             if (lm == null)
@@ -153,5 +170,8 @@ namespace DisneyBattle.API.Controllers
 
 
         }
+
+         
+
     }
 }

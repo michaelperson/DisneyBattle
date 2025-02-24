@@ -19,7 +19,7 @@ namespace DisneyBattle.API.Controllers
             _personnageService = personnageService;
             _mapper = mapper;
         }
-        [Authorize(Policy = "CustomJWTOnly")]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

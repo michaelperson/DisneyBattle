@@ -5,6 +5,8 @@ using DisneyBattle.BLL.Models;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace DisneyBattle.API.Controllers
@@ -171,7 +173,134 @@ namespace DisneyBattle.API.Controllers
 
         }
 
-         
 
+        /// <summary>
+        /// Permet d'échanger le token Ad en token API
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("exchange")]
+        public async Task<IActionResult> ExchangeToken(JwtResponse msal)
+        {
+            // Validez le token MSAL
+            var msalToken = msal.Access_Token;// Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            //Vérification si le token n'a pas expiré
+           if(MsalTokenParser.IsTokenExpired(msalToken))
+            {
+                return new UnauthorizedObjectResult($"Token expiré: {msalToken}");
+            }
+           
+           MsalTokenInfo msinfo = MsalTokenParser.ParseToken(msalToken);
+            //Vérification si c'est la bonne application qui a trasnmis le token
+            if(msinfo.Claims.FirstOrDefault(c=>c.Type== "app_displayname" && c.Value== "DisneyBattelBlaz")==null)
+            {
+                return new UnauthorizedObjectResult($"Mauvaise application Azure");
+            }
+            //Récupération des infos du token pour authentifier le user
+            string email = msinfo.Claims.FirstOrDefault(c => c.Type == "unique_name")?.Value;
+            if(email==null)
+            {
+                return new UnauthorizedObjectResult($"Pas de mail disponible");
+            }
+
+            //Jwt associé
+            UtilisateurModel? u = _userService.GetByEmail(email);
+            if (u == null)
+            {
+                return new   StatusCodeResult(307); //BadRequestObjectResult(u);
+            }
+
+            UserDto user = _mapper.Map<UserDto>(u);
+            string leTokenArenvoyer = JwtManager.GenerateToken(_jwtOption, user);
+             
+
+            return Ok(new JwtResponse { Access_Token = leTokenArenvoyer, Refresh_Token = "" });
+        }
+
+        
+
+    }
+    public class MsalToken
+    {
+        public string Token { get;set; } 
+    }
+
+    public class MsalTokenInfo
+    {
+        public string AccessToken { get; set; }
+        public string IdToken { get; set; }
+        public DateTime ExpiresOn { get; set; }
+        public string Scope { get; set; }
+        public string TenantId { get; set; }
+        public string ObjectId { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public IEnumerable<Claim> Claims { get; set; }
+    }
+
+    public static class MsalTokenParser
+    {
+        public static MsalTokenInfo ParseToken(string accessToken, string idToken = null)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var tokenInfo = new MsalTokenInfo
+            {
+                AccessToken = accessToken,
+                IdToken = idToken
+            };
+
+            if (handler.CanReadToken(accessToken))
+            {
+                var jwtToken = handler.ReadJwtToken(accessToken);
+                tokenInfo.Claims = jwtToken.Claims;
+                tokenInfo.ExpiresOn = jwtToken.ValidTo;
+
+                // Extraction des claims standards
+                tokenInfo.TenantId = jwtToken.Claims.FirstOrDefault(c => c.Type == "tid")?.Value;
+                tokenInfo.ObjectId = jwtToken.Claims.FirstOrDefault(c => c.Type == "oid")?.Value;
+                tokenInfo.Scope = jwtToken.Claims.FirstOrDefault(c => c.Type == "scp")?.Value;
+
+                // Si un ID token est fourni, on extrait les informations supplémentaires
+                if (!string.IsNullOrEmpty(idToken) && handler.CanReadToken(idToken))
+                {
+                    var idJwtToken = handler.ReadJwtToken(idToken);
+                    tokenInfo.Name = idJwtToken.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+                    tokenInfo.Email = idJwtToken.Claims.FirstOrDefault(c =>
+                        c.Type == "preferred_username" ||
+                        c.Type == "upn" ||
+                        c.Type == "email")?.Value;
+                }
+            }
+
+            return tokenInfo;
+        }
+
+        public static Dictionary<string, string> GetAllClaims(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var claims = new Dictionary<string, string>();
+
+            if (handler.CanReadToken(token))
+            {
+                var jwtToken = handler.ReadJwtToken(token);
+                foreach (var claim in jwtToken.Claims)
+                {
+                    claims[claim.Type] = claim.Value;
+                }
+            }
+
+            return claims;
+        }
+
+        public static bool IsTokenExpired(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            if (handler.CanReadToken(token))
+            {
+                var jwtToken = handler.ReadJwtToken(token);
+                return DateTime.UtcNow >= jwtToken.ValidTo;
+            }
+            return true;
+        }
     }
 }

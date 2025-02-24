@@ -11,5 +11,6 @@ namespace DisneyBattle.BLL.Interfaces
     {
         UtilisateurModel? Authenticate (string username, string password);
         bool Checkrefresh(string access_Token, string refresh_Token);
+        UtilisateurModel? GetByEmail(string email);
     }
 }

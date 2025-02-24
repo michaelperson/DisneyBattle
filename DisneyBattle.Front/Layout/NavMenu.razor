@@ -3,13 +3,20 @@
     <MudSpacer />
     <MudNavMenu Class="d-flex flex-row  my-custom-navmenu">
         <MudNavLink Href="/" Match="NavLinkMatch.All">Homepage</MudNavLink>
-        <MudNavLink Href="/categories">Categories</MudNavLink>
-        <MudNavLink Href="/blog">Our Blog</MudNavLink>
-        <MudNavLink Href="/contacts">Contacts</MudNavLink>
+        <MudNavLink Href="/Personnages">Personnages</MudNavLink>
+        <MudNavLink Href="/Equipes">Equipes</MudNavLink>
+        <MudNavLink Href="/Combats">Combats</MudNavLink>
+        <MudNavLink Href="/Palmares">Palmares</MudNavLink>
     </MudNavMenu>
-    <MudSpacer />
-    <MudIconButton Icon="@Icons.Material.Filled.Search" Color="Color.Inherit" Edge="Edge.End" ></MudIconButton>
-    <MudIconButton Icon="@profileIcon" Color="Color.Inherit" Edge="Edge.End" Href="/secured"  /> 
+    <MudSpacer /> 
+     <AuthorizeView>
+                <NotAuthorized>
+                    <MudIconButton Icon="@profileIcon" Color="Color.Inherit" Edge="Edge.End" Href="/Login" />                       
+                </NotAuthorized>
+                <Authorized> 
+                     <a href="/Secured"><img src="img/profile-icon.png" />Profil de @userName</a>
+                </Authorized>
+            </AuthorizeView>
 </MudAppBar>
 
 @code

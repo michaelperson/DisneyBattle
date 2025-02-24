@@ -56,4 +56,10 @@ public class UtilisateurService : IUserService
         return (_unitOfWork.Utilisateurs.Checkrefresh(access_Token,refresh_Token));
     }
 
+    public UtilisateurModel? GetByEmail(string email)
+    {
+        Utilisateur? u = _unitOfWork.Utilisateurs.GetByEmail(email);
+        return u == null ? default(UtilisateurModel) : _mapper.Map<UtilisateurModel>(u);
+    }
+
 }

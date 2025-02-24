@@ -45,6 +45,13 @@ namespace DisneyBattle.DAL.Repositories
 
             return user != null;
         }
+
+        public Utilisateur? GetByEmail(string email)
+        {
+            Utilisateur? user = _context.Utilisateurs.SingleOrDefault(x => x.Email == email);
+
+            return user;
+        }
     }
         
 }

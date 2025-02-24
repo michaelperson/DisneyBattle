@@ -8,5 +8,5 @@
     link.rel = 'shortcut icon';
     link.href = '/assets/swagger/favicon-16x16.png';
     document.getElementsByTagName('head')[0].appendChild(link);
-    alert("ok");
+     
 })();

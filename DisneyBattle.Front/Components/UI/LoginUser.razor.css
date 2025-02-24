@@ -1,4 +1,4 @@
-.ms-logout-button {
+﻿.ms-login-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -14,7 +14,7 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-    .ms-logout-button:hover {
+    .ms-login-button:hover {
         background-color: #f9f9f9;
     }
 

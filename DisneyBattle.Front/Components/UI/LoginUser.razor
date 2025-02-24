@@ -47,3 +47,13 @@
         <span>Sign in with Microsoft</span>
     </button>
 </MudCard>
+<MudOverlay Visible="@isLoading" DarkBackground="true" Absolute="true">
+    <svg class="mickey-loader" viewBox="0 0 100 100">
+        <!-- Tête de Mickey -->
+        <circle cx="50" cy="50" r="35" fill="#000" />
+        <!-- Oreille gauche -->
+        <circle cx="20" cy="20" r="20" fill="#000" />
+        <!-- Oreille droite -->
+        <circle cx="80" cy="20" r="20" fill="#000" />
+    </svg>
+</MudOverlay>
